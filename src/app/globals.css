@@ -252,7 +252,7 @@ footer{margin-top:38px;padding-top:17px;border-top:1px solid var(--line);font-si
 .admin-customer-top strong,.admin-customer-top small{display:block}
 .admin-customer-top strong{font-size:13px;color:#e3eefb}
 .admin-customer-top small{font-size:10px;color:#8094ac;margin-top:5px}
-.admin-customer-controls{display:grid;grid-template-columns:1fr 1fr 1fr auto auto;align-items:end;gap:10px;margin:17px 0;padding:15px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.admin-customer-controls{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto auto;align-items:end;gap:10px;margin:17px 0;padding:15px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .admin-customer-controls input,.admin-customer-controls select{height:36px}
 .admin-usage{display:grid;gap:5px;padding:0 4px}
 .admin-usage small{font-size:9px;color:#7890aa}
