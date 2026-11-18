@@ -9,7 +9,7 @@ button{font:inherit}
 .app-shell{min-height:100vh;display:flex}
 .sidebar{width:252px;flex-shrink:0;border-right:1px solid var(--line);background:rgba(10,16,27,.94);padding:27px 18px 18px;display:flex;flex-direction:column}
 .brand{display:flex;align-items:center;gap:12px;padding:0 10px 42px}
-.brand-mark{width:39px;height:39px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(145deg,#58d4e8,#3274d9);color:#06101e;font-family:Manrope,sans-serif;font-size:22px;font-weight:800;box-shadow:0 8px 28px #277bd744}
+.brand-logo{width:46px;height:46px;flex:0 0 46px;display:block;object-fit:contain;border-radius:13px;filter:drop-shadow(0 5px 16px rgba(39,139,255,.28))}.auth-mobile-brand .brand-logo{width:48px;height:48px;flex-basis:48px}
 .brand strong,.brand small{display:block;font-family:Manrope,sans-serif;letter-spacing:1.4px}
 .brand strong{font-size:14px}.brand small{font-size:9px;color:#8da5c2;margin-top:3px}
 .workspace-label,.eyebrow,.card-kicker{font-size:10px;font-weight:700;letter-spacing:1.6px;color:#71849e}
