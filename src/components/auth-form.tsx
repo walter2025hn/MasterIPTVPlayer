@@ -36,7 +36,8 @@ export default function AuthForm({ mode }: Props) {
         if (signUpError) throw signUpError;
 
         if (data.session) {
-          router.replace("/");
+          const next = new URLSearchParams(window.location.search).get("next");
+          router.replace(next?.startsWith("/") ? next : "/");
           router.refresh();
         } else {
           setMessage("Tu cuenta fue creada. Revisa tu correo para confirmar la dirección y luego inicia sesión.");
@@ -47,7 +48,8 @@ export default function AuthForm({ mode }: Props) {
           password,
         });
         if (signInError) throw signInError;
-        router.replace("/");
+        const next = new URLSearchParams(window.location.search).get("next");
+        router.replace(next?.startsWith("/") ? next : "/");
         router.refresh();
       }
     } catch (caught) {
