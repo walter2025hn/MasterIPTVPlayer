@@ -42,7 +42,7 @@ export default function AdminDashboard({customers,plans,sources,devices,events}:
     finally{setBusy(false);}
   }
 
-  async function updatePlan(customerId:string,planType:string,limit:number){
+  async function updatePlan(customerId:string,planType:string,limit:number,expiry:string){
     setBusy(true);setError("");setMessage("");
     const existing=planMap.get(customerId);
     const {error}=await supabase.from("customer_plans").upsert({
@@ -117,9 +117,9 @@ export default function AdminDashboard({customers,plans,sources,devices,events}:
               <div className="admin-customer-top"><div><strong>{c.display_name||"Cliente"}</strong><small>{c.email}</small><small>Registro: {date(c.created_at)}</small></div><span className={c.account_status==="active"?"status-pill good":"status-pill bad"}>{c.account_status==="active"?"Activo":"Suspendido"}</span></div>
               <div className="admin-customer-controls">
                 <label>Plan<select defaultValue={p?.plan_type??"free"} id={"plan-"+c.id}><option value="free">Gratis</option><option value="premium">Premium</option></select></label>
-                <label>Activaciones / mes<input type="number" min="0" max="1000" defaultValue={p?.monthly_activation_limit??3} id={"limit-"+c.id} disabled={p?.plan_type==="premium"}/></label>
+                <label>Activaciones / mes<input type="number" min="0" max="1000" defaultValue={p?.monthly_activation_limit??3} id={"limit-"+c.id} disabled={p?.plan_type==="premium"}/></label>\n                <label>Vencimiento<input type="date" defaultValue={p?.expires_at?.slice(0,10)??""} id={"expiry-"+c.id}/></label>
                 <div className="admin-usage"><small>Uso este mes</small><strong>{p?.plan_type==="premium"?"Ilimitadas":(p?.monthly_activation_count??0)+" / "+(p?.monthly_activation_limit??3)}</strong></div>
-                <button className="admin-small-primary" disabled={busy} onClick={()=>{const plan=(document.getElementById("plan-"+c.id) as HTMLSelectElement).value;const limit=Number((document.getElementById("limit-"+c.id) as HTMLInputElement).value);void updatePlan(c.id,plan,limit)}}>Guardar plan</button>
+                <button className="admin-small-primary" disabled={busy} onClick={()=>{const plan=(document.getElementById("plan-"+c.id) as HTMLSelectElement).value;const limit=Number((document.getElementById("limit-"+c.id) as HTMLInputElement).value);const expiry=(document.getElementById("expiry-"+c.id) as HTMLInputElement).value;void updatePlan(c.id,plan,limit,expiry)}}>Guardar plan</button>
                 <button className={c.account_status==="active"?"admin-small-danger":"admin-small-primary"} disabled={busy} onClick={()=>void toggleAccount(c)}>{c.account_status==="active"?"Suspender":"Reactivar"}</button>
               </div>
               <div className="admin-customer-details">
