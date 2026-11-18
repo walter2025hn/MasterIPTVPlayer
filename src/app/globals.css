@@ -172,3 +172,58 @@ footer{margin-top:38px;padding-top:17px;border-top:1px solid var(--line);font-si
 .action-link span{margin-left:12px}
 @media(max-width:850px){.portal-content{padding:34px 26px}.portal-heading{align-items:flex-start;flex-direction:column}}
 @media(max-width:720px){.portal-content{padding:28px 16px}.portal-card{padding:17px}.portal-two-col,.account-details{grid-template-columns:1fr}.portal-back{align-self:flex-start}}
+
+
+/* Fix shared portal layout: keep sidebar and page content side by side */
+.portal-shell{
+  min-height:100vh;
+  width:100%;
+  display:flex;
+  align-items:stretch;
+}
+.portal-shell>.sidebar{
+  width:252px;
+  min-width:252px;
+  min-height:100vh;
+  align-self:stretch;
+}
+.portal-shell>.main-area{
+  flex:1 1 auto;
+  min-width:0;
+  width:calc(100% - 252px);
+}
+.portal-shell .topbar{
+  position:sticky;
+  top:0;
+  z-index:5;
+  backdrop-filter:blur(14px);
+}
+.portal-shell .portal-content{
+  width:100%;
+}
+@media(max-width:1050px){
+  .portal-shell>.sidebar{width:220px;min-width:220px}
+  .portal-shell>.main-area{width:calc(100% - 220px)}
+  .portal-content{padding:36px 26px}
+  .portal-shell .topbar{padding:0 26px}
+}
+@media(max-width:720px){
+  .portal-shell>.sidebar{width:68px;min-width:68px;padding:20px 9px}
+  .portal-shell>.sidebar .brand{padding:0 5px 35px}
+  .portal-shell>.sidebar .brand>span:last-child,
+  .portal-shell>.sidebar .workspace-label,
+  .portal-shell>.sidebar .nav-item:not(.active),
+  .portal-shell>.sidebar .help-card,
+  .portal-shell>.sidebar .profile-mini>div:not(.avatar){display:none}
+  .portal-shell>.sidebar .nav-item{justify-content:center;padding:0}
+  .portal-shell>.sidebar .nav-item.active{font-size:0}
+  .portal-shell>.sidebar .nav-icon{font-size:20px}
+  .portal-shell>.sidebar .profile-mini{justify-content:center}
+  .portal-shell>.main-area{width:calc(100% - 68px)}
+  .portal-shell .topbar{height:60px;padding:0 17px}
+  .portal-content{padding:28px 16px}
+  .portal-card{padding:17px}
+  .portal-two-col,.account-details{grid-template-columns:1fr}
+  .portal-heading{align-items:flex-start;flex-direction:column}
+  .portal-back{align-self:flex-start}
+}
