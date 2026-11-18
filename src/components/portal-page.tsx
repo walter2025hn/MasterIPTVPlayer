@@ -64,8 +64,8 @@ export default function PortalPage(props:Props) {
         if(raw){
           let found=raw;
           try{const parsed=new URL(raw);found=parsed.searchParams.get("code")??raw;}catch{}
-          const digits=found.replace(/\\D/g,"");
-          if(/^\\d{6}$/.test(digits)){setPairCode(digits);setScannerOpen(false);setScannerError("");return;}
+          const digits=found.replace(/\D/g,"");
+          if(/^\d{6}$/.test(digits)){setPairCode(digits);setScannerOpen(false);setScannerError("");return;}
         }
       }catch{}
       if(!stopped)frame=requestAnimationFrame(scan);
