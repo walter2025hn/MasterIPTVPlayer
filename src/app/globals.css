@@ -103,3 +103,25 @@ footer{margin-top:38px;padding-top:17px;border-top:1px solid var(--line);font-si
 .account-strip button{border:1px solid rgba(123,157,193,.2);border-radius:7px;background:#18263a;color:#9db4ce;padding:8px 10px;font-size:10px;cursor:pointer}
 .admin-nav{color:#7fd5ed!important}
 @media(max-width:800px){.auth-page{grid-template-columns:1fr}.auth-visual{display:none}.auth-panel{min-height:100vh;padding:35px 22px}.auth-mobile-brand{display:flex}}
+
+
+/* Administrator overview */
+.admin-page{min-height:100vh;background:radial-gradient(ellipse at 80% 0,rgba(38,107,190,.15),transparent 35%),var(--bg)}
+.admin-header{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 5%}
+.admin-header .brand{padding:0}
+.admin-back{font-size:11px;color:#9db6d1}
+.admin-content{max-width:1280px;margin:0 auto;padding:48px 5%}
+.admin-content h1{font-size:34px}.admin-content h1 span{background:linear-gradient(90deg,#77d7ec,#62a8ff);background-clip:text;-webkit-background-clip:text;color:transparent}
+.admin-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin:28px 0 35px}
+.admin-metrics .stat-card{min-height:105px}
+.admin-section{margin-top:27px}
+.admin-section-head{margin-bottom:14px}
+.admin-section-head h2{font-size:17px}.admin-section-head p{font-size:11px;color:var(--muted);margin-top:6px}
+.admin-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#0f1826}
+.admin-table{width:100%;border-collapse:collapse;text-align:left;min-width:650px}
+.admin-table th{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#7d91aa;background:#142033;padding:14px 16px}
+.admin-table td{font-size:11px;color:#c2d0e1;padding:14px 16px;border-top:1px solid var(--line);white-space:nowrap}
+.admin-table td strong,.admin-table td small{display:block}.admin-table td small{color:#778ba4;font-size:9px;margin-top:4px}
+.table-pill,.status-pill{display:inline-block;border-radius:20px;padding:5px 9px;background:#192b41;color:#a8d9f4;font-size:9px}
+.status-pill.good{background:rgba(43,148,104,.13);color:#8ce0b6}.status-pill.bad{background:rgba(173,53,53,.13);color:#ffaaaa}
+@media(max-width:700px){.admin-content{padding:35px 18px}.admin-metrics{grid-template-columns:1fr}.admin-header{padding:0 18px}}
