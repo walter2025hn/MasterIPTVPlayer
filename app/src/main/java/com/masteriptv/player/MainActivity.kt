@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.KeyboardType\nimport androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -166,8 +166,8 @@ fun MasterPlayerApp() {
                         Text("XTREAM CODES",fontSize=10.sp,color=Cyan,fontWeight=FontWeight.Bold)
                         OutlinedTextField(value=xtreamServer,onValueChange={xtreamServer=it},modifier=Modifier.fillMaxWidth(),singleLine=true,placeholder={Text("URL del servidor")})
                         OutlinedTextField(value=xtreamUser,onValueChange={xtreamUser=it},modifier=Modifier.fillMaxWidth(),singleLine=true,placeholder={Text("Usuario")})
-                        OutlinedTextField(value=xtreamPass,onValueChange={xtreamPass=it},modifier=Modifier.fillMaxWidth(),singleLine=true,placeholder={Text("Contraseña")})
-                        Button(onClick={scope.launch {busy=true;try{val base=xtreamServer.trimEnd('/');val text=withContext(Dispatchers.IO){httpGet("$base/get.php?username=$xtreamUser&password=$xtreamPass&type=m3u_plus&output=ts")};channels=parseM3u(text);message="Xtream conectado: ${channels.size} elementos.";page="Canales"}catch(e:Exception){message=e.message?:"No se pudo conectar Xtream."};busy=false}},enabled=xtreamServer.startsWith("http")&&xtreamUser.isNotBlank()&&xtreamPass.isNotBlank()&&!busy,modifier=Modifier.fillMaxWidth()){Text("Conectar Xtream")}
+                        OutlinedTextField(value=xtreamPass,onValueChange={xtreamPass=it},modifier=Modifier.fillMaxWidth(),singleLine=true,visualTransformation=PasswordVisualTransformation(),placeholder={Text("Contraseña")})
+                        Button(onClick={scope.launch {busy=true;try{val base=xtreamServer.trimEnd('/');val userEncoded=java.net.URLEncoder.encode(xtreamUser,"UTF-8");val passEncoded=java.net.URLEncoder.encode(xtreamPass,"UTF-8");val text=withContext(Dispatchers.IO){httpGet("$base/get.php?username=$userEncoded&password=$passEncoded&type=m3u_plus&output=ts")};channels=parseM3u(text);message="Xtream conectado: ${channels.size} elementos.";page="Canales"}catch(e:Exception){message=e.message?:"No se pudo conectar Xtream."};busy=false}},enabled=xtreamServer.startsWith("http")&&xtreamUser.isNotBlank()&&xtreamPass.isNotBlank()&&!busy,modifier=Modifier.fillMaxWidth()){Text("Conectar Xtream")}
                         HorizontalDivider(Modifier.padding(vertical=16.dp),color=Muted.copy(alpha=.2f))
                         Text("ACTIVAR DISPOSITIVO",fontSize=10.sp,color=Cyan,fontWeight=FontWeight.Bold)
                         Text("Introduce el código de 6 dígitos generado desde tu panel de cliente.",fontSize=11.sp,color=Muted,modifier=Modifier.padding(vertical=7.dp))
