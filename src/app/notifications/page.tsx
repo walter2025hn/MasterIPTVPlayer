@@ -1,0 +1,2 @@
+import {redirect} from "next/navigation";import {createClient} from "@/lib/supabase/server";import NotificationsCenter from "@/components/notifications-center";
+export default async function Page(){const s=await createClient();const {data:{user}}=await s.auth.getUser();if(!user)redirect("/login");const {data}=await s.from("customer_notifications").select("id,title,message,created_at,read_at").or("user_id.eq."+user.id+",user_id.is.null").order("created_at",{ascending:false}).limit(100);return <NotificationsCenter items={data??[]}/>}
