@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 type Source = { id:string; label:string; source_type:string; created_at:string };
@@ -45,6 +45,43 @@ export default function PortalPage(props:Props) {
   const [file,setFile]=useState<File|null>(null);
   const [pairCode,setPairCode]=useState(props.initialCode ?? "");
   const [selectedSource,setSelectedSource]=useState(props.sources?.[0]?.id ?? "");
+  const [scannerOpen,setScannerOpen]=useState(false);
+  const [scannerError,setScannerError]=useState("");
+  const videoRef=useRef<HTMLVideoElement|null>(null);
+
+  useEffect(()=>{
+    if(!scannerOpen)return;
+    let stopped=false;
+    let stream:MediaStream|null=null;
+    let frame=0;
+    let detector:any=null;
+    const stop=()=>{stopped=true;if(frame)cancelAnimationFrame(frame);stream?.getTracks().forEach(track=>track.stop());};
+    const scan=async()=>{
+      if(stopped||!videoRef.current||videoRef.current.readyState<2){if(!stopped)frame=requestAnimationFrame(scan);return;}
+      try{
+        const codes=await detector.detect(videoRef.current);
+        const raw=String(codes?.[0]?.rawValue??"");
+        if(raw){
+          let found=raw;
+          try{const parsed=new URL(raw);found=parsed.searchParams.get("code")??raw;}catch{}
+          const digits=found.replace(/\\D/g,"");
+          if(/^\\d{6}$/.test(digits)){setPairCode(digits);setScannerOpen(false);setScannerError("");return;}
+        }
+      }catch{}
+      if(!stopped)frame=requestAnimationFrame(scan);
+    };
+    (async()=>{
+      try{
+        const Barcode=(window as any).BarcodeDetector;
+        if(!Barcode)throw new Error("Este navegador no admite lectura QR integrada. Usa la cámara del teléfono para abrir el enlace del QR.");
+        detector=new Barcode({formats:["qr_code"]});
+        stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});
+        if(stopped){stream.getTracks().forEach(track=>track.stop());return;}
+        if(videoRef.current){videoRef.current.srcObject=stream;await videoRef.current.play();frame=requestAnimationFrame(scan);}
+      }catch(e){setScannerError(e instanceof Error?e.message:"No se pudo abrir la cámara.");}
+    })();
+    return stop;
+  },[scannerOpen]);
 
   async function signOut(){
     const supabase=createClient();
@@ -101,7 +138,9 @@ export default function PortalPage(props:Props) {
     finally{setBusy(false);}
   }
 
-  async function manageDevice(deviceId:string,sourceId:string,deviceName:string){setBusy(true);setError("");setNotice("");try{const r=await fetch("/api/devices/manage",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({deviceId,sourceId,deviceName})});const d=await r.json();if(!r.ok)throw new Error(d.error||"No se pudo actualizar.");setNotice("Dispositivo actualizado.");router.refresh();}catch(e){setError(e instanceof Error?e.message:"Error al actualizar.");}finally{setBusy(false);}}\n\n  async function revokeDevice(id:string){
+  async function manageDevice(deviceId:string,sourceId:string,deviceName:string){setBusy(true);setError("");setNotice("");try{const r=await fetch("/api/devices/manage",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({deviceId,sourceId,deviceName})});const d=await r.json();if(!r.ok)throw new Error(d.error||"No se pudo actualizar.");setNotice("Dispositivo actualizado.");router.refresh();}catch(e){setError(e instanceof Error?e.message:"Error al actualizar.");}finally{setBusy(false);}}
+
+  async function revokeDevice(id:string){
     if(!window.confirm("¿Desactivar este dispositivo?")) return;
     setBusy(true);setError("");setNotice("");
     const supabase=createClient();
@@ -121,7 +160,9 @@ export default function PortalPage(props:Props) {
         <Link className={props.section==="lists"?"nav-item active":"nav-item"} href="/lists"><span className="nav-icon">▤</span>Mis listas</Link>
         <Link className={props.section==="devices"?"nav-item active":"nav-item"} href="/devices"><span className="nav-icon">▣</span>Dispositivos</Link>
         <Link className={props.section==="activations"?"nav-item active":"nav-item"} href="/activations"><span className="nav-icon">◷</span>Activaciones</Link>
-        <Link className={props.section==="account"?"nav-item active":"nav-item"} href="/account"><span className="nav-icon">⚙</span>Mi cuenta</Link>\n        <Link className="nav-item" href="/notifications"><span className="nav-icon">◉</span>Notificaciones</Link>\n        <Link className="nav-item" href="/support"><span className="nav-icon">?</span>Soporte</Link>
+        <Link className={props.section==="account"?"nav-item active":"nav-item"} href="/account"><span className="nav-icon">⚙</span>Mi cuenta</Link>
+        <Link className="nav-item" href="/notifications"><span className="nav-icon">◉</span>Notificaciones</Link>
+        <Link className="nav-item" href="/support"><span className="nav-icon">?</span>Soporte</Link>
       </nav>
       <div className="sidebar-bottom"><div className="help-card"><span className="help-icon">?</span><strong>¿Necesitas ayuda?</strong><p>Usa listas y contenido que tengas autorización para utilizar.</p></div><div className="profile-mini"><div className="avatar">MP</div><div><strong>Mi cuenta</strong><small>{props.email}</small></div><button className="signout-mini" onClick={signOut} title="Cerrar sesión">↗</button></div></div>
     </aside>
@@ -158,6 +199,8 @@ export default function PortalPage(props:Props) {
           <section className="portal-card"><h2>Activar un dispositivo</h2><p className="portal-muted">Abre Master IPTV Player en tu TV. En pantalla aparecerá un código y un QR. Escribe el código aquí o escanea el QR con la cámara de tu teléfono. Después elige qué lista quieres enviar a ese equipo.</p>
             {(props.sources??[]).length===0?<div className="empty-state">Primero agrega tus listas en <Link href="/lists">Mis listas</Link>. Luego podrás elegir cuál activar en cada dispositivo.</div>:<form className="portal-form" onSubmit={claimDevice}>
               <label>Código que aparece en la TV<input inputMode="numeric" autoComplete="one-time-code" value={pairCode} onChange={e=>setPairCode(e.target.value.replace(/\D/g,"").slice(0,6))} placeholder="000000" required minLength={6} maxLength={6}/></label>
+              <button type="button" className="secondary-action" onClick={()=>{setScannerError("");setScannerOpen(v=>!v)}}>{scannerOpen?"Cerrar cámara":"Escanear código QR con la cámara"}</button>
+              {scannerOpen&&<div className="qr-scanner-panel"><video ref={videoRef} muted playsInline className="qr-scanner-video" aria-label="Vista de la cámara para escanear QR"/><p className="portal-muted">Apunta la cámara al código QR que aparece en tu TV.</p>{scannerError&&<div className="form-alert error">{scannerError}</div>}</div>}
               <label>Lista que quieres activar en este dispositivo<select value={selectedSource} onChange={e=>setSelectedSource(e.target.value)} required>{props.sources?.map(s=><option key={s.id} value={s.id}>{s.label} · {s.source_type==="xtream"?"Xtream Codes":s.source_type==="m3u_file"?"Archivo M3U":"Enlace M3U"}</option>)}</select></label>
               <button className="primary-action" disabled={busy||pairCode.length!==6||!selectedSource}>{busy?"Vinculando…":"Activar esta lista en mi dispositivo"} <span>→</span></button>
             </form>}
