@@ -15,7 +15,8 @@ type Props = {
   devices?:Device[];
   events?:Event[];
   profile?:{display_name:string|null;email:string;account_status:string;created_at:string}|null;
-  plan?:{plan_type:string;monthly_activation_limit:number;monthly_activation_count:number;expires_at:string|null}|null;\n  initialCode?:string;
+  plan?:{plan_type:string;monthly_activation_limit:number;monthly_activation_count:number;expires_at:string|null}|null;
+  initialCode?:string;
 };
 
 const titles = {
@@ -42,9 +43,8 @@ export default function PortalPage(props:Props) {
   const [username,setUsername]=useState("");
   const [password,setPassword]=useState("");
   const [file,setFile]=useState<File|null>(null);
-  const [pairCode,setPairCode]=useState("");
-  const [deviceName,setDeviceName]=useState("Mi Android TV");
-  const [platform,setPlatform]=useState("android_tv");
+  const [pairCode,setPairCode]=useState(props.initialCode ?? "");
+  const [selectedSource,setSelectedSource]=useState(props.sources?.[0]?.id ?? "");
 
   async function signOut(){
     const supabase=createClient();
@@ -86,14 +86,16 @@ export default function PortalPage(props:Props) {
     finally{setBusy(false);}
   }
 
-  async function generateCode(){
-    setBusy(true);setError("");setNotice("");setPairCode("");
+  async function claimDevice(event:FormEvent<HTMLFormElement>){
+    event.preventDefault();setBusy(true);setError("");setNotice("");
     try{
-      const response=await fetch("/api/devices/pairing-code",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({deviceName,platform})});
+      const response=await fetch("/api/devices/claim",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code:pairCode,sourceId:selectedSource})});
       const result=await response.json();
-      if(!response.ok) throw new Error(result.error||"No se pudo generar el código.");
-      setPairCode(result.code);setNotice("Código creado. Caduca en 10 minutos.");
-    }catch(e){setError(e instanceof Error?e.message:"Error al generar el código.");}
+      if(!response.ok) throw new Error(result.error||"No se pudo vincular el dispositivo.");
+      setNotice(result.message||"Solicitud enviada. La TV cargará tu lista en unos segundos.");
+      setPairCode("");
+      router.refresh();
+    }catch(e){setError(e instanceof Error?e.message:"Error al vincular el dispositivo.");}
     finally{setBusy(false);}
   }
 
