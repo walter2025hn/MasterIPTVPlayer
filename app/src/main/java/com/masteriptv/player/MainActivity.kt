@@ -100,7 +100,7 @@ fun MasterPlayerApp() {
                 }
             } catch(e:Exception) {
                 val reason=e.message.orEmpty()
-                if(reason.contains("cuenta",true)||reason.contains("límite",true)||reason.contains("vencido",true)||reason.contains("suspendida",true)) { status=reason; break }
+                if(reason.contains("cuenta",true)||reason.contains("límite",true)||reason.contains("suspendida",true)||reason.contains("plan",true)) { status=reason; break }
             }
             delay(2500)
         }
