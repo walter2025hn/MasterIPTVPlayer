@@ -1,0 +1,2 @@
+import {redirect} from "next/navigation";import {createClient} from "@/lib/supabase/server";import AdminSupport from "@/components/admin-support";
+export default async function Page(){const s=await createClient();const {data:{user}}=await s.auth.getUser();if(!user||user.app_metadata?.role!=="admin")redirect("/");const {data}=await s.from("support_tickets").select("id,user_id,subject,message,status,admin_reply,created_at").order("created_at",{ascending:false}).limit(200);return <AdminSupport tickets={data??[]}/>}
