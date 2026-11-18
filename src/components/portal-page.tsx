@@ -6,7 +6,7 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 type Source = { id:string; label:string; source_type:string; created_at:string };
-type Device = { id:string; device_name:string; platform:string; status:string; activated_at:string|null; last_seen_at:string|null; created_at:string };
+type Device = { id:string; device_name:string; platform:string; status:string; source_id:string|null; activated_at:string|null; last_seen_at:string|null; created_at:string };
 type Event = { id:string; event_type:string; details:unknown; created_at:string };
 type Props = {
   section:"lists"|"devices"|"activations"|"account";
@@ -101,7 +101,7 @@ export default function PortalPage(props:Props) {
     finally{setBusy(false);}
   }
 
-  async function revokeDevice(id:string){
+  async function manageDevice(deviceId:string,sourceId:string,deviceName:string){setBusy(true);setError("");setNotice("");try{const r=await fetch("/api/devices/manage",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({deviceId,sourceId,deviceName})});const d=await r.json();if(!r.ok)throw new Error(d.error||"No se pudo actualizar.");setNotice("Dispositivo actualizado.");router.refresh();}catch(e){setError(e instanceof Error?e.message:"Error al actualizar.");}finally{setBusy(false);}}\n\n  async function revokeDevice(id:string){
     if(!window.confirm("¿Desactivar este dispositivo?")) return;
     setBusy(true);setError("");setNotice("");
     const supabase=createClient();
@@ -163,7 +163,7 @@ export default function PortalPage(props:Props) {
             </form>}
           </section>
           <section className="portal-card"><div className="portal-card-heading"><h2>Dispositivos vinculados</h2><span className="count-pill">{props.devices?.length??0}</span></div>
-            {(props.devices??[]).length===0?<div className="empty-state">Todavía no hay dispositivos vinculados.</div>:<div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Dispositivo</th><th>Plataforma</th><th>Estado</th><th>Última actividad</th><th></th></tr></thead><tbody>{props.devices?.map(d=><tr key={d.id}><td>{d.device_name}</td><td>{d.platform}</td><td><span className={d.status==="active"?"status-pill good":"status-pill"}>{d.status}</span></td><td>{date(d.last_seen_at??d.activated_at)}</td><td>{d.status==="active"&&<button className="danger-action" onClick={()=>revokeDevice(d.id)} disabled={busy}>Desactivar</button>}</td></tr>)}</tbody></table></div>}
+            {(props.devices??[]).length===0?<div className="empty-state">Todavía no hay dispositivos vinculados.</div>:<div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Dispositivo</th><th>Plataforma</th><th>Estado</th><th>Última actividad</th><th>Lista asignada</th><th></th></tr></thead><tbody>{props.devices?.map(d=><tr key={d.id}><td>{d.device_name}</td><td>{d.platform}</td><td><span className={d.status==="active"?"status-pill good":"status-pill"}>{d.status}</span></td><td>{date(d.last_seen_at??d.activated_at)}</td><td>{d.status==="active"?<div className="portal-two-col"><select aria-label="Lista asignada" defaultValue={d.source_id??""} id={"device-source-"+d.id}>{props.sources?.map(src=><option key={src.id} value={src.id}>{src.label}</option>)}</select><button className="secondary-action" disabled={busy} onClick={()=>manageDevice(d.id,(document.getElementById("device-source-"+d.id) as HTMLSelectElement).value,d.device_name)}>Cambiar</button></div>:"—"}</td><td>{d.status==="active"&&<button className="danger-action" onClick={()=>revokeDevice(d.id)} disabled={busy}>Desactivar</button>}</td></tr>)}</tbody></table></div>}
           </section>
         </>}
 
