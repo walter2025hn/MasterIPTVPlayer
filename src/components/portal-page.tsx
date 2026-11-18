@@ -161,6 +161,7 @@ export default function PortalPage(props:Props) {
         <Link className={props.section==="devices"?"nav-item active":"nav-item"} href="/devices"><span className="nav-icon">▣</span>Dispositivos</Link>
         <Link className={props.section==="activations"?"nav-item active":"nav-item"} href="/activations"><span className="nav-icon">◷</span>Activaciones</Link>
         <Link className={props.section==="account"?"nav-item active":"nav-item"} href="/account"><span className="nav-icon">⚙</span>Mi cuenta</Link>
+        <Link className="nav-item" href="/premium"><span className="nav-icon">✦</span>Plan Premium</Link>
         <Link className="nav-item" href="/notifications"><span className="nav-icon">◉</span>Notificaciones</Link>
         <Link className="nav-item" href="/support"><span className="nav-icon">?</span>Soporte</Link>
       </nav>
