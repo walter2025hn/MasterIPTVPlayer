@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createDecipheriv } from "node:crypto";
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
 export const runtime = "nodejs";
 
@@ -21,7 +21,10 @@ export async function POST(request: Request) {
     const fingerprint = String(body.fingerprint ?? "");
     if (!deviceId || !/^[a-f0-9]{64}$/i.test(fingerprint)) return NextResponse.json({ error: "Dispositivo no válido." }, { status: 400 });
 
-    const supabase = await createClient();
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+    if (!serviceKey) throw new Error("Falta configurar el acceso seguro del reproductor.");
+    const supabase = createSupabaseClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
     const { data: device, error } = await supabase.from("devices")
       .select("id,user_id,source_id,status,device_fingerprint_hash")
       .eq("id", deviceId).eq("device_fingerprint_hash", fingerprint).eq("status", "active").maybeSingle();
