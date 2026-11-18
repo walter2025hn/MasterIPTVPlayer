@@ -20,5 +20,10 @@ export async function POST(request: Request) {
     user_id: user.id, code_hash: codeHash, device_name: deviceName, platform, expires_at: expiresAt,
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  await supabase.from("activation_events").insert({
+    user_id: user.id,
+    event_type: "pairing_started",
+    details: { device_name: deviceName, platform, expires_at: expiresAt },
+  });
   return NextResponse.json({ code, expiresAt }, { status: 201 });
 }
