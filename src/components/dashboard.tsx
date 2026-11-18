@@ -22,6 +22,7 @@ const menu = [
   { icon: "▣", label: "Dispositivos", href: "/devices" },
   { icon: "◷", label: "Activaciones", href: "/activations" },
   { icon: "⚙", label: "Mi cuenta", href: "/account" },
+  { icon: "✦", label: "Plan Premium", href: "/premium" },
 ];
 
 export default function Dashboard(props: Props) {
