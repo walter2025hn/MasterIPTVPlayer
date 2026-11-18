@@ -1,0 +1,2 @@
+import {redirect} from "next/navigation";import {createClient} from "@/lib/supabase/server";import SupportCenter from "@/components/support-center";
+export default async function Page(){const s=await createClient();const {data:{user}}=await s.auth.getUser();if(!user)redirect("/login");const {data}=await s.from("support_tickets").select("id,subject,message,status,admin_reply,created_at,replied_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(50);return <SupportCenter tickets={data??[]}/>}
