@@ -8,6 +8,8 @@ export async function POST(request: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
+  const { data: profile } = await supabase.from("profiles").select("account_status").eq("id", user.id).maybeSingle();
+  if (profile?.account_status !== "active") return NextResponse.json({ error: "Tu cuenta está suspendida. Contacta con el administrador." }, { status: 403 });
 
   const body = await request.json();
   const platform = ["android_tv", "tv_box", "android_phone", "other"].includes(body.platform) ? body.platform : "android_tv";
