@@ -74,6 +74,8 @@ export default function PortalPage(props:Props) {
     finally{setBusy(false);}
   }
 
+  async function checkSource(id:string){setBusy(true);setError("");setNotice("");try{const r=await fetch("/api/sources/check",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sourceId:id})});const d=await r.json();if(!r.ok)throw new Error(d.error||"No se pudo comprobar.");setNotice(d.check.status==="ok"?"La lista respondió correctamente.":"La lista presenta un problema: "+d.check.message);}catch(e){setError(e instanceof Error?e.message:"Error de comprobación.");}finally{setBusy(false);}}
+
   async function deleteSource(id:string){
     if(!window.confirm("¿Seguro que deseas eliminar esta lista?")) return;
     setBusy(true);setError("");setNotice("");
@@ -119,7 +121,7 @@ export default function PortalPage(props:Props) {
         <Link className={props.section==="lists"?"nav-item active":"nav-item"} href="/lists"><span className="nav-icon">▤</span>Mis listas</Link>
         <Link className={props.section==="devices"?"nav-item active":"nav-item"} href="/devices"><span className="nav-icon">▣</span>Dispositivos</Link>
         <Link className={props.section==="activations"?"nav-item active":"nav-item"} href="/activations"><span className="nav-icon">◷</span>Activaciones</Link>
-        <Link className={props.section==="account"?"nav-item active":"nav-item"} href="/account"><span className="nav-icon">⚙</span>Mi cuenta</Link>
+        <Link className={props.section==="account"?"nav-item active":"nav-item"} href="/account"><span className="nav-icon">⚙</span>Mi cuenta</Link>\n        <Link className="nav-item" href="/notifications"><span className="nav-icon">◉</span>Notificaciones</Link>\n        <Link className="nav-item" href="/support"><span className="nav-icon">?</span>Soporte</Link>
       </nav>
       <div className="sidebar-bottom"><div className="help-card"><span className="help-icon">?</span><strong>¿Necesitas ayuda?</strong><p>Usa listas y contenido que tengas autorización para utilizar.</p></div><div className="profile-mini"><div className="avatar">MP</div><div><strong>Mi cuenta</strong><small>{props.email}</small></div><button className="signout-mini" onClick={signOut} title="Cerrar sesión">↗</button></div></div>
     </aside>
@@ -148,7 +150,7 @@ export default function PortalPage(props:Props) {
             </form>
           </section>
           <section className="portal-card"><div className="portal-card-heading"><div><h2>Mis listas guardadas</h2><p className="portal-muted">Tus datos privados no se muestran en esta tabla.</p></div><span className="count-pill">{props.sources?.length??0} listas</span></div>
-            {(props.sources??[]).length===0?<div className="empty-state">Todavía no agregaste ninguna lista.</div>:<div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Nombre</th><th>Tipo</th><th>Fecha</th><th>Acción</th></tr></thead><tbody>{props.sources?.map(s=><tr key={s.id}><td>{s.label}</td><td>{s.source_type==="xtream"?"Xtream Codes":s.source_type==="m3u_file"?"Archivo M3U":"Enlace M3U"}</td><td>{date(s.created_at)}</td><td><button className="danger-action" onClick={()=>deleteSource(s.id)} disabled={busy}>Eliminar</button></td></tr>)}</tbody></table></div>}
+            {(props.sources??[]).length===0?<div className="empty-state">Todavía no agregaste ninguna lista.</div>:<div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Nombre</th><th>Tipo</th><th>Fecha</th><th>Acción</th></tr></thead><tbody>{props.sources?.map(s=><tr key={s.id}><td>{s.label}</td><td>{s.source_type==="xtream"?"Xtream Codes":s.source_type==="m3u_file"?"Archivo M3U":"Enlace M3U"}</td><td>{date(s.created_at)}</td><td><button className="secondary-action" onClick={()=>checkSource(s.id)} disabled={busy}>Comprobar</button><button className="danger-action" onClick={()=>deleteSource(s.id)} disabled={busy}>Eliminar</button></td></tr>)}</tbody></table></div>}
           </section>
         </>}
 
