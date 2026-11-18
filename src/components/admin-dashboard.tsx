@@ -49,7 +49,7 @@ export default function AdminDashboard({customers,plans,sources,devices,events}:
       user_id:customerId,plan_type:planType,monthly_activation_limit:planType==="premium"?0:Math.max(0,limit),
       monthly_activation_count:existing?.monthly_activation_count??0,
       counter_month: new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString().slice(0,10),
-      expires_at:existing?.expires_at??null
+      expires_at:expiry?new Date(`${expiry}T23:59:59`).toISOString():null
     });
     if(error)setError(error.message);else{setMessage("Plan y límite actualizados.");window.location.reload();}
     setBusy(false);
@@ -117,7 +117,8 @@ export default function AdminDashboard({customers,plans,sources,devices,events}:
               <div className="admin-customer-top"><div><strong>{c.display_name||"Cliente"}</strong><small>{c.email}</small><small>Registro: {date(c.created_at)}</small></div><span className={c.account_status==="active"?"status-pill good":"status-pill bad"}>{c.account_status==="active"?"Activo":"Suspendido"}</span></div>
               <div className="admin-customer-controls">
                 <label>Plan<select defaultValue={p?.plan_type??"free"} id={"plan-"+c.id}><option value="free">Gratis</option><option value="premium">Premium</option></select></label>
-                <label>Activaciones / mes<input type="number" min="0" max="1000" defaultValue={p?.monthly_activation_limit??3} id={"limit-"+c.id} disabled={p?.plan_type==="premium"}/></label>\n                <label>Vencimiento<input type="date" defaultValue={p?.expires_at?.slice(0,10)??""} id={"expiry-"+c.id}/></label>
+                <label>Activaciones / mes<input type="number" min="0" max="1000" defaultValue={p?.monthly_activation_limit??3} id={"limit-"+c.id} disabled={p?.plan_type==="premium"}/></label>
+                <label>Vencimiento<input type="date" defaultValue={p?.expires_at?.slice(0,10)??""} id={"expiry-"+c.id}/></label>
                 <div className="admin-usage"><small>Uso este mes</small><strong>{p?.plan_type==="premium"?"Ilimitadas":(p?.monthly_activation_count??0)+" / "+(p?.monthly_activation_limit??3)}</strong></div>
                 <button className="admin-small-primary" disabled={busy} onClick={()=>{const plan=(document.getElementById("plan-"+c.id) as HTMLSelectElement).value;const limit=Number((document.getElementById("limit-"+c.id) as HTMLInputElement).value);const expiry=(document.getElementById("expiry-"+c.id) as HTMLInputElement).value;void updatePlan(c.id,plan,limit,expiry)}}>Guardar plan</button>
                 <button className={c.account_status==="active"?"admin-small-danger":"admin-small-primary"} disabled={busy} onClick={()=>void toggleAccount(c)}>{c.account_status==="active"?"Suspender":"Reactivar"}</button>
