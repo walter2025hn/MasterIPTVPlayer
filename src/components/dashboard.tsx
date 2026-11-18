@@ -18,10 +18,10 @@ type Props = {
 
 const menu = [
   { icon: "⌂", label: "Resumen", href: "/" },
-  { icon: "▤", label: "Mis listas", href: "#listas" },
-  { icon: "▣", label: "Dispositivos", href: "#dispositivos" },
-  { icon: "◷", label: "Activaciones", href: "#activaciones" },
-  { icon: "⚙", label: "Mi cuenta", href: "#cuenta" },
+  { icon: "▤", label: "Mis listas", href: "/lists" },
+  { icon: "▣", label: "Dispositivos", href: "/devices" },
+  { icon: "◷", label: "Activaciones", href: "/activations" },
+  { icon: "⚙", label: "Mi cuenta", href: "/account" },
 ];
 
 export default function Dashboard(props: Props) {
@@ -46,7 +46,7 @@ export default function Dashboard(props: Props) {
         <div className="workspace-label">ESPACIO PERSONAL</div>
         <nav className="nav-list" aria-label="Navegación principal">
           {menu.map((item, index) => (
-            <a key={item.label} className={index === 0 ? "nav-item active" : "nav-item"} href={item.href}>
+            <Link key={item.label} className={index === 0 ? "nav-item active" : "nav-item"} href={item.href}>
               <span className="nav-icon">{item.icon}</span>{item.label}
             </a>
           ))}
@@ -92,13 +92,13 @@ export default function Dashboard(props: Props) {
 
           <section className="section-heading"><div><h2>Tu espacio de trabajo</h2><p>Las herramientas de tu cuenta estarán disponibles aquí.</p></div></section>
           <section className="action-grid">
-            <article className="action-card featured"><div className="action-icon">＋</div><div className="card-kicker">MIS CONTENIDOS</div><h3>Conecta tu primera lista</h3><p>Agrega un enlace M3U, sube un archivo o conecta tu cuenta Xtream Codes.</p><button type="button" disabled>En desarrollo <span>→</span></button></article>
-            <article className="action-card"><div className="action-icon">▣</div><div className="card-kicker">TUS EQUIPOS</div><h3>Vincula tu dispositivo</h3><p>Usa el código que aparecerá en tu TV o escanea un código QR.</p><button type="button" disabled>En desarrollo <span>→</span></button></article>
-            <article className="action-card"><div className="action-icon">◷</div><div className="card-kicker">TU CUENTA</div><h3>Consulta tus activaciones</h3><p>Revisa el consumo de tu plan y el historial de tus dispositivos.</p><button type="button" disabled>En desarrollo <span>→</span></button></article>
+            <article className="action-card featured"><div className="action-icon">＋</div><div className="card-kicker">MIS CONTENIDOS</div><h3>Conecta tu primera lista</h3><p>Agrega un enlace M3U, sube un archivo o conecta tu cuenta Xtream Codes.</p><Link className="action-link" href="/lists">Abrir mis listas <span>→</span></Link></article>
+            <article className="action-card"><div className="action-icon">▣</div><div className="card-kicker">TUS EQUIPOS</div><h3>Vincula tu dispositivo</h3><p>Usa el código que aparecerá en tu TV o escanea un código QR.</p><Link className="action-link" href="/devices">Vincular dispositivo <span>→</span></Link></article>
+            <article className="action-card"><div className="action-icon">◷</div><div className="card-kicker">TU CUENTA</div><h3>Consulta tus activaciones</h3><p>Revisa el consumo de tu plan y el historial de tus dispositivos.</p><Link className="action-link" href="/activations">Ver activaciones <span>→</span></Link></article>
           </section>
 
           <div className="account-strip"><div><strong>Sesión iniciada</strong><span>{props.email}</span></div><button onClick={signOut}>Cerrar sesión</button></div>
-          <div className="notice"><span>i</span><p><strong>Panel conectado.</strong> Tu sesión y los datos básicos de tu cuenta ya se consultan desde Supabase. La gestión de listas, dispositivos y administración se habilitará en las siguientes etapas.</p></div>
+          <div className="notice"><span>i</span><p><strong>Panel conectado.</strong> Tu sesión y los datos básicos de tu cuenta ya se consultan desde Supabase. Ya puedes administrar tus listas, generar códigos temporales de vinculación y consultar los datos de tu cuenta.</p></div>
           <footer>MASTER IPTV PLAYER <span>•</span> CONTROL TOTAL DE TU ENTRETENIMIENTO</footer>
         </div>
       </section>
