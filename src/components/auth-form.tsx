@@ -63,7 +63,7 @@ export default function AuthForm({ mode }: Props) {
     <main className="auth-page">
       <section className="auth-visual">
         <Link className="brand auth-brand" href="/">
-          <span className="brand-mark">M</span>
+          <img className="brand-logo" src="/master-logo.svg" alt="Master IPTV Player" />
           <span><strong>MASTER</strong><small>IPTV PLAYER</small></span>
         </Link>
         <div className="auth-visual-copy">
@@ -79,7 +79,7 @@ export default function AuthForm({ mode }: Props) {
       <section className="auth-panel">
         <div className="auth-card">
           <div className="auth-mobile-brand">
-            <span className="brand-mark">M</span><strong>MASTER IPTV PLAYER</strong>
+            <img className="brand-logo" src="/master-logo.svg" alt="" /><strong>MASTER IPTV PLAYER</strong>
           </div>
           <div className="eyebrow">{isRegister ? "EMPIEZA AHORA" : "QUÉ BUENO TENERTE DE VUELTA"}</div>
           <h2>{isRegister ? "Crea tu cuenta" : "Inicia sesión"}</h2>
