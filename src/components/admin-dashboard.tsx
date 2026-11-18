@@ -71,7 +71,7 @@ export default function AdminDashboard({customers,plans,sources,devices,events}:
     setBusy(false);
   }
 
-  async function revokeDevice(id:string){
+  async function revokeDevice(id:string,userId:string){
     if(!window.confirm("¿Revocar este dispositivo?"))return;
     setBusy(true);setError("");setMessage("");
     const {error}=await supabase.from("devices").update({status:"revoked",revoked_at:new Date().toISOString()}).eq("id",id);
@@ -124,7 +124,7 @@ export default function AdminDashboard({customers,plans,sources,devices,events}:
               </div>
               <div className="admin-customer-details">
                 <details><summary>Listas del cliente ({cs.length})</summary>{cs.length===0?<p className="admin-empty">Sin listas guardadas.</p>:cs.map(s=><div className="admin-resource" key={s.id}><span><strong>{s.label}</strong><small>{s.source_type} · {date(s.created_at)}</small></span><button className="admin-small-danger" disabled={busy} onClick={()=>void deleteSource(s.id)}>Eliminar</button></div>)}</details>
-                <details><summary>Dispositivos ({ds.length})</summary>{ds.length===0?<p className="admin-empty">Sin dispositivos registrados.</p>:ds.map(d=><div className="admin-resource" key={d.id}><span><strong>{d.device_name||"Dispositivo"}</strong><small>{d.platform} · {d.status} · {date(d.last_seen_at??d.activated_at)}</small></span>{d.status==="active"&&<button className="admin-small-danger" disabled={busy} onClick={()=>void revokeDevice(d.id)}>Revocar</button>}</div>)}</details>
+                <details><summary>Dispositivos ({ds.length})</summary>{ds.length===0?<p className="admin-empty">Sin dispositivos registrados.</p>:ds.map(d=><div className="admin-resource" key={d.id}><span><strong>{d.device_name||"Dispositivo"}</strong><small>{d.platform} · {d.status} · {date(d.last_seen_at??d.activated_at)}</small></span>{d.status==="active"&&<button className="admin-small-danger" disabled={busy} onClick={()=>void revokeDevice(d.id,c.id)}>Revocar</button>}</div>)}</details>
               </div>
             </article>
           })}
