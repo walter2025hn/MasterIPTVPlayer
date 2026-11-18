@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {createClient} from "@/lib/supabase/server";
+import {createServiceClient} from "@/lib/supabase/service";
 export const runtime="nodejs";
 async function paypalToken(){
  const id=process.env.PAYPAL_CLIENT_ID,secret=process.env.PAYPAL_CLIENT_SECRET;
@@ -25,7 +26,8 @@ export async function POST(request:Request){
    application_context:{brand_name:"Master IPTV Player",user_action:"PAY_NOW",return_url:site+"/premium?paypal=success&order="+orderId,cancel_url:site+"/premium?paypal=cancel"}
   }),cache:"no-store"});
   const data=await response.json();if(!response.ok||!data.id)throw new Error("PayPal no pudo crear el checkout.");
-  const {error:updateError}=await s.from("payment_orders").update({external_order_id:data.id}).eq("id",orderId).eq("user_id",user.id);
+  const service=createServiceClient();
+  const {error:updateError}=await service.from("payment_orders").update({external_order_id:data.id}).eq("id",orderId).eq("user_id",user.id);
   if(updateError)throw updateError;
   const approval=data.links?.find((x:any)=>x.rel==="approve")?.href;if(!approval)throw new Error("PayPal no devolvió el enlace de aprobación.");
   return NextResponse.json({approvalUrl:approval});
