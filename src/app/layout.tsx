@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Master IPTV Player",
   description: "Tu entretenimiento, organizado en un solo lugar.",
+  icons: { icon: "/master-logo.svg", shortcut: "/master-logo.svg", apple: "/master-logo.svg" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
