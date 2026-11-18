@@ -40,7 +40,7 @@ export async function POST(request: Request) {
         target = new URL(config.url);
       } else if (data.source_type === "xtream") {
         target = new URL(config.server);
-        target.pathname = target.pathname.replace(/\\/$/, "") + "/get.php";
+        target.pathname = target.pathname.replace(/\/$/, "") + "/get.php";
         target.search = new URLSearchParams({ username: config.username, password: config.password, type: "m3u_plus", output: "ts" }).toString();
       } else {
         return NextResponse.json({ error: "Formato de lista no compatible." }, { status: 400 });
