@@ -48,7 +48,7 @@ export default function Dashboard(props: Props) {
           {menu.map((item, index) => (
             <Link key={item.label} className={index === 0 ? "nav-item active" : "nav-item"} href={item.href}>
               <span className="nav-icon">{item.icon}</span>{item.label}
-            </a>
+            </Link>
           ))}
           {props.isAdmin && <Link className="nav-item admin-nav" href="/admin"><span className="nav-icon">◆</span>Administración</Link>}
         </nav>
