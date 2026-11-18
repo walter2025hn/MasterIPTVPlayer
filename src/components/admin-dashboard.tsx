@@ -33,7 +33,7 @@ export default function AdminDashboard({customers,plans,sources,devices,events}:
   async function createCustomer(e:FormEvent){
     e.preventDefault();setBusy(true);setError("");setMessage("");
     try{
-      const {data,error:invokeError}=await supabase.functions.invoke("admin-create-customer",{body:{email,name:email,password,displayName:name,planType:newPlan,monthlyLimit:Number(newLimit)}});
+      const {data,error:invokeError}=await supabase.functions.invoke("admin-create-customer",{body:{email,password,displayName:name,planType:newPlan,monthlyLimit:Number(newLimit)}});
       if(invokeError)throw invokeError;
       if(data?.error)throw new Error(data.error);
       setMessage("Cuenta creada correctamente. El cliente ya puede iniciar sesión.");
