@@ -1,0 +1,2 @@
+import {redirect} from "next/navigation";import {createClient} from "@/lib/supabase/server";import AdminNotifications from "@/components/admin-notifications";
+export default async function Page(){const s=await createClient();const {data:{user}}=await s.auth.getUser();if(!user||user.app_metadata?.role!=="admin")redirect("/");const {data}=await s.from("profiles").select("id,email,display_name").order("created_at",{ascending:false}).limit(500);return <AdminNotifications customers={data??[]}/>}
