@@ -112,7 +112,7 @@ export default function PortalPage(props:Props) {
 
   return <main className="portal-shell">
     <aside className="sidebar">
-      <Link className="brand" href="/"><span className="brand-mark">M</span><span><strong>MASTER</strong><small>IPTV PLAYER</small></span></Link>
+      <Link className="brand" href="/"><img className="brand-logo" src="/master-logo.svg" alt="Master IPTV Player" /><span><strong>MASTER</strong><small>IPTV PLAYER</small></span></Link>
       <div className="workspace-label">ESPACIO PERSONAL</div>
       <nav className="nav-list" aria-label="Navegación principal">
         <Link className={props.section==="lists"?"nav-item":"nav-item"} href="/"><span className="nav-icon">⌂</span>Resumen</Link>
