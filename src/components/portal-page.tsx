@@ -155,7 +155,7 @@ export default function PortalPage(props:Props) {
         {props.section==="devices"&&<>
           <section className="portal-card"><h2>Activar un dispositivo</h2><p className="portal-muted">Abre Master IPTV Player en tu TV. En pantalla aparecerá un código y un QR. Escribe el código aquí o escanea el QR con la cámara de tu teléfono. Después elige qué lista quieres enviar a ese equipo.</p>
             {(props.sources??[]).length===0?<div className="empty-state">Primero agrega tus listas en <Link href="/lists">Mis listas</Link>. Luego podrás elegir cuál activar en cada dispositivo.</div>:<form className="portal-form" onSubmit={claimDevice}>
-              <label>Código que aparece en la TV<input inputMode="numeric" autoComplete="one-time-code" value={pairCode} onChange={e=>setPairCode(e.target.value.replace(/\\D/g,"").slice(0,6))} placeholder="000000" required minLength={6} maxLength={6}/></label>
+              <label>Código que aparece en la TV<input inputMode="numeric" autoComplete="one-time-code" value={pairCode} onChange={e=>setPairCode(e.target.value.replace(/\D/g,"").slice(0,6))} placeholder="000000" required minLength={6} maxLength={6}/></label>
               <label>Lista que quieres activar en este dispositivo<select value={selectedSource} onChange={e=>setSelectedSource(e.target.value)} required>{props.sources?.map(s=><option key={s.id} value={s.id}>{s.label} · {s.source_type==="xtream"?"Xtream Codes":s.source_type==="m3u_file"?"Archivo M3U":"Enlace M3U"}</option>)}</select></label>
               <button className="primary-action" disabled={busy||pairCode.length!==6||!selectedSource}>{busy?"Vinculando…":"Activar esta lista en mi dispositivo"} <span>→</span></button>
             </form>}
