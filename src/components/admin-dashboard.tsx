@@ -82,7 +82,7 @@ export default function AdminDashboard({customers,plans,sources,devices,events}:
   return <main className="admin-page">
     <header className="admin-header">
       <Link className="brand" href="/"><img className="brand-logo" src="/master-logo.svg" alt="Master IPTV Player" /><span><strong>MASTER</strong><small>IPTV PLAYER</small></span></Link>
-      <div className="admin-header-actions"><span className="admin-live-dot">● Administrador</span><Link className="admin-back" href="/admin/support">Soporte</Link><Link className="admin-back" href="/">← Panel de cliente</Link></div>
+      <div className="admin-header-actions"><span className="admin-live-dot">● Administrador</span><Link className="admin-back" href="/admin/support">Soporte</Link><Link className="admin-back" href="/admin/notifications">Notificaciones</Link><Link className="admin-back" href="/">← Panel de cliente</Link></div>
     </header>
     <div className="admin-content">
       <div className="eyebrow">CENTRO DE CONTROL · MASTER IPTV PLAYER</div>
