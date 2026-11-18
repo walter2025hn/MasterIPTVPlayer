@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -119,7 +120,7 @@ fun MasterPlayerApp() {
         }) { padding ->
             Column(Modifier.fillMaxSize().padding(padding).background(Navy)) {
                 Row(Modifier.fillMaxWidth().padding(horizontal=20.dp,vertical=14.dp),verticalAlignment=Alignment.CenterVertically) {
-                    Box(Modifier.size(42.dp).background(Blue,RoundedCornerShape(13.dp)),contentAlignment=Alignment.Center) { Text("M",fontSize=24.sp,fontWeight=FontWeight.Black,color=Color.White) }
+                    Image(painter=painterResource(R.drawable.master_logo),contentDescription="Master IPTV Player",modifier=Modifier.size(46.dp))
                     Spacer(Modifier.width(12.dp))
                     Column { Text("MASTER",fontWeight=FontWeight.ExtraBold,letterSpacing=2.sp,fontSize=17.sp); Text("IPTV PLAYER",fontSize=9.sp,letterSpacing=2.sp,color=Cyan) }
                     Spacer(Modifier.weight(1f)); Text(if(activated) "CONECTADO" else "VINCULAR TV",fontSize=9.sp,color=if(activated) Cyan else Muted)
@@ -132,6 +133,8 @@ fun MasterPlayerApp() {
                     }
                 } else if(!activated) {
                     Column(Modifier.fillMaxSize().padding(horizontal=20.dp),horizontalAlignment=Alignment.CenterHorizontally,verticalArrangement=Arrangement.Center) {
+                        Image(painter=painterResource(R.drawable.master_logo),contentDescription="Logo Master IPTV Player",modifier=Modifier.size(104.dp))
+                        Spacer(Modifier.height(12.dp))
                         Text("VINCULA TU DISPOSITIVO",color=Cyan,fontSize=11.sp,fontWeight=FontWeight.Bold,letterSpacing=1.5.sp)
                         Spacer(Modifier.height(8.dp)); Text("Escanea el QR o escribe este código en tu panel de cliente",color=Color.White,fontSize=14.sp)
                         Spacer(Modifier.height(20.dp))
