@@ -15,12 +15,12 @@ type Props = {
   devices?:Device[];
   events?:Event[];
   profile?:{display_name:string|null;email:string;account_status:string;created_at:string}|null;
-  plan?:{plan_type:string;monthly_activation_limit:number;monthly_activation_count:number;expires_at:string|null}|null;
+  plan?:{plan_type:string;monthly_activation_limit:number;monthly_activation_count:number;expires_at:string|null}|null;\n  initialCode?:string;
 };
 
 const titles = {
   lists:["Mis listas IPTV","Agrega y organiza tus fuentes M3U o Xtream Codes."],
-  devices:["Mis dispositivos","Vincula tu TV, TV Box o teléfono con un código temporal."],
+  devices:["Mis dispositivos","Activa una lista en tu TV, TV Box o teléfono con un código o QR."],
   activations:["Historial de activaciones","Consulta los movimientos recientes de tus dispositivos."],
   account:["Mi cuenta","Consulta el estado de tu cuenta y tu plan actual."]
 };
@@ -151,9 +151,12 @@ export default function PortalPage(props:Props) {
         </>}
 
         {props.section==="devices"&&<>
-          <section className="portal-card"><h2>Vincular un dispositivo</h2><p className="portal-muted">Genera un código temporal para introducirlo en Master IPTV Player. El emparejamiento automático dentro de la app Android todavía requiere integrar el cliente de TV.</p>
-            <div className="portal-form"><div className="portal-two-col"><label>Nombre del dispositivo<input value={deviceName} onChange={e=>setDeviceName(e.target.value)} maxLength={80}/></label><label>Tipo de dispositivo<select value={platform} onChange={e=>setPlatform(e.target.value)}><option value="android_tv">Android TV</option><option value="tv_box">TV Box</option><option value="android_phone">Teléfono Android</option><option value="other">Otro</option></select></label></div><button className="primary-action" onClick={generateCode} disabled={busy}>{busy?"Generando…":"Generar código de vinculación"} <span>→</span></button></div>
-            {pairCode&&<div className="pair-code"><small>CÓDIGO TEMPORAL · VÁLIDO 10 MINUTOS</small><strong>{pairCode}</strong><span>El código se guarda como hash y no se puede recuperar después de cerrar esta pantalla.</span></div>}
+          <section className="portal-card"><h2>Activar un dispositivo</h2><p className="portal-muted">Abre Master IPTV Player en tu TV. En pantalla aparecerá un código y un QR. Escribe el código aquí o escanea el QR con la cámara de tu teléfono. Después elige qué lista quieres enviar a ese equipo.</p>
+            {(props.sources??[]).length===0?<div className="empty-state">Primero agrega tus listas en <Link href="/lists">Mis listas</Link>. Luego podrás elegir cuál activar en cada dispositivo.</div>:<form className="portal-form" onSubmit={claimDevice}>
+              <label>Código que aparece en la TV<input inputMode="numeric" autoComplete="one-time-code" value={pairCode} onChange={e=>setPairCode(e.target.value.replace(/\\D/g,"").slice(0,6))} placeholder="000000" required minLength={6} maxLength={6}/></label>
+              <label>Lista que quieres activar en este dispositivo<select value={selectedSource} onChange={e=>setSelectedSource(e.target.value)} required>{props.sources?.map(s=><option key={s.id} value={s.id}>{s.label} · {s.source_type==="xtream"?"Xtream Codes":s.source_type==="m3u_file"?"Archivo M3U":"Enlace M3U"}</option>)}</select></label>
+              <button className="primary-action" disabled={busy||pairCode.length!==6||!selectedSource}>{busy?"Vinculando…":"Activar esta lista en mi dispositivo"} <span>→</span></button>
+            </form>}
           </section>
           <section className="portal-card"><div className="portal-card-heading"><h2>Dispositivos vinculados</h2><span className="count-pill">{props.devices?.length??0}</span></div>
             {(props.devices??[]).length===0?<div className="empty-state">Todavía no hay dispositivos vinculados.</div>:<div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Dispositivo</th><th>Plataforma</th><th>Estado</th><th>Última actividad</th><th></th></tr></thead><tbody>{props.devices?.map(d=><tr key={d.id}><td>{d.device_name}</td><td>{d.platform}</td><td><span className={d.status==="active"?"status-pill good":"status-pill"}>{d.status}</span></td><td>{date(d.last_seen_at??d.activated_at)}</td><td>{d.status==="active"&&<button className="danger-action" onClick={()=>revokeDevice(d.id)} disabled={busy}>Desactivar</button>}</td></tr>)}</tbody></table></div>}
