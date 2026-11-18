@@ -37,6 +37,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
     implementation("androidx.media3:media3-exoplayer:1.5.1")
     implementation("androidx.media3:media3-ui:1.5.1")
-    implementation("androidx.media3:media3-exoplayer-hls:1.5.1")\n    implementation("com.google.zxing:core:3.5.3")
+    implementation("androidx.media3:media3-exoplayer-hls:1.5.1")
+    implementation("com.google.zxing:core:3.5.3")
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
