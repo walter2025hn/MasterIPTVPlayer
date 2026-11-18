@@ -24,10 +24,10 @@ export default function PremiumCheckout({userId,products,settings,orders,plan}:P
   setBusy(true);setError("");setMessage("");
   try{
    if(!product||!amount||amount<=0)throw new Error("Este plan todavía no tiene precio configurado en esa moneda.");
+   if(method==="manual"&&!receipt)throw new Error("Selecciona el comprobante de pago antes de continuar.");
    if(method==="paypal"){const r=await fetch("/api/payments/paypal/create",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({productId:selected,currency})});const d=await r.json();if(!r.ok||!d.approvalUrl)throw new Error(d.error||"No se pudo iniciar PayPal.");window.location.href=d.approvalUrl;return;}
    const {data:orderId,error:rpcError}=await supabase.rpc("create_payment_order",{p_product_id:selected,p_currency:currency,p_method:method});
    if(rpcError||!orderId)throw rpcError??new Error("No se pudo crear el pedido.");
-   if(!receipt)throw new Error("Selecciona el comprobante de pago antes de continuar.");
    const ext=receipt.name.split(".").pop()?.toLowerCase()||"jpg";
    const path=userId+"/"+orderId+"."+ext;
    const {error:uploadError}=await supabase.storage.from("payment-receipts").upload(path,receipt,{upsert:false,contentType:receipt.type});
