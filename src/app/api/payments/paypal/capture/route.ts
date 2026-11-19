@@ -18,7 +18,8 @@ export async function POST(request:Request){
   const cd=await cr.json();if(!cr.ok)throw new Error("PayPal no pudo confirmar el cobro.");
   const capture=cd.purchase_units?.[0]?.payments?.captures?.[0];
   if(cd.status!=="COMPLETED"||capture?.status!=="COMPLETED"||capture?.amount?.currency_code!==order.currency||Number(capture?.amount?.value)!==Number(order.amount))throw new Error("El importe o estado confirmado por PayPal no coincide.");
-  const service=createServiceClient();\n  const {error:completeError}=await service.rpc("complete_paypal_payment",{p_order_id:orderId,p_paypal_order_id:paypalOrderId,p_capture_id:String(capture.id)});
+  const service=createServiceClient();
+  const {error:completeError}=await service.rpc("complete_paypal_payment",{p_order_id:orderId,p_paypal_order_id:paypalOrderId,p_capture_id:String(capture.id)});
   if(completeError)throw completeError;
   return NextResponse.json({success:true});
  }catch(e){return NextResponse.json({error:e instanceof Error?e.message:"No se pudo confirmar el pago."},{status:400});}
